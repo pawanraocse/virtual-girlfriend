@@ -1,6 +1,9 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters
 from telegram import Update
 
+import openai
+
+openai.api_key = "API-KEY"
 
 
 def start(update, context):
@@ -34,7 +37,23 @@ def generate_response(user_message):
     # For example, you can use conditionals, random selection, or even machine learning techniques
 
     # Return a sample response for now
-    return "I'm still learning. Can we talk about something else?"
+    return generate_response(user_message)
+
+def generate_response(user_message):
+    prompt = "User: {}\nBot:".format(user_message)
+    response = openai.Completion.create(
+        engine="gpt-3.5-turbo",  # Use the appropriate engine, e.g., text-davinci-003 or text-davinci
+        prompt=prompt,
+        max_tokens=50,
+        n=1,
+        stop=None,
+        temperature=0.7,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.6
+    )
+    return response.choices[0].text.strip()
+
 
 
 
