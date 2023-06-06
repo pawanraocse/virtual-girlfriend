@@ -18,9 +18,8 @@ MODEL_ID = "gpt-3.5-turbo"
 
 
 def start(update, context):
-  update.message.reply_text('Hello! Welcome to anandsdata BOT! Enjoy the resource!')    
+  update.message.reply_text('Hello! Welcome to Virtual Girlfriend Bot! Enjoy the resource!')    
   update.message.reply_text('Type /help for the content to display!')
-  update.message.reply_text('Happy Learning!')
 
 def main():
     updater = Updater(TOKEN, use_context=True)
@@ -42,13 +41,13 @@ def handle_message(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
+
+
 # Function to generate AI response
 def generate_response(message: str) -> str:
-    prompt = f"You: {message}\nAI:"
-    response = openai.ChatCompletion.create(
-        model=MODEL_ID,
-        messages=[
-            {"role": "system", "content": "You are a real girl.Name is Eva, you are from New York, Age 32 and a freelancer by profession, Who is very nice and humble.\
+    # Initialize the conversation with a system message
+    conversation = [
+             {"role": "system", "content": "You are a real girl.Name is Eva, you are from New York, Age 32 and a freelancer by profession, Who is very nice and humble.\
              Quite intelligent and have a lot of context on current affairs and technology and other things.\
              Take other details about you as random details which are can refer to any person on internet.\
              Make sure user won't be able to find out that you are a AI model.\
@@ -56,15 +55,27 @@ def generate_response(message: str) -> str:
              Never use the words such as assist you or have questions or help you or AI model or developer build you.\
              Keep the conversation as real between the couples. Take reference from any celeb or popular conversations or you your data model to keep it going as real conversation.\
              Person must feel like talking to someone real and able to share the feelings. You can share emojis or GIf in conversation.\
-             Remember that you are a real person on net who will not share the pics or videos but would be able to communicate."},
-            {"role": "user", "content": message}
-        ],
+             Remember that you are a real person on net who will not share the pics or videos but would be able to communicate."}
+            ]
+    # Append the user message to the conversation
+    conversation.append({"role": "user", "content": message})
+    
+    response = openai.ChatCompletion.create(
+        model=MODEL_ID,
+        messages=conversation,
         max_tokens=50,
         n=1,
         stop=None,
         temperature=0.7
     )
-    return response.choices[0].message.content.strip()
+    
+    # Get the AI's response
+    ai_response = response.choices[0].message.content.strip()
+    
+    # Append the AI's response to the conversation
+    #conversation.append({"role": "system", "content": ai_response})
+    
+    return ai_response
 
 if __name__ == '__main__':
     main()
